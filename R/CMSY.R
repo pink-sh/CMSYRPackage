@@ -120,54 +120,7 @@ ma    <- function(x){
   x.1[2] <- (x[1]+x[2])/2
   return(x.1)
 }
-#---------------------------------------------
-# END OF FUNCTIONS
-#---------------------------------------------
-
-#-----------------------------------------
-# Start output to screen
-#-----------------------------------------
-cat("-------------------------------------------\n")
-cat("CMSY Analysis,", date(),"\n")
-cat("-------------------------------------------\n")
-
-#------------------------------------------
-# Read data and assign to vectors
-#------------------------------------------
-# create headers for data table file
-if(write.output==T){
-  outheaders = data.frame("Group","Region", "Subregion","Name","SciName","Stock","start.yr","end.yr","btype",
-                          "MaxCatch","LastCatch","MSY_BSM","lcl","ucl","r_BSM","lcl","ucl",
-                          "k_BSM","lcl","ucl","q_BSM","lcl","ucl","rel_B_BSM","lcl","ucl","rel_F_BSM",
-                          "r_CMSY","lcl","ucl","k_CMSY","lcl","ucl","MSY_CMSY","lcl","ucl",
-                          "rel_B_CMSY","2.5th","97.5th","rel_F_CMSY",
-                          "F_msy","lcl","ucl","curF_msy","lcl","ucl",
-                          "MSY","lcl","ucl","Bmsy","lcl","ucl",
-                          "B","lcl","ucl","B_Bmsy","lcl","ucl",
-                          "F","lcl","ucl","F_Fmsy","lcl","ucl",
-                          "sel_B","sel_B_Bmsy","sel_F","sel_F_Fmsy",
-                          "c00","c01","c02","c03","c04","c05","c06","c07","c08","c09","c10","c11","c12","c13","c14","c15",
-                          "F.Fmsy00","F.Fmsy01","F.Fmsy02","F.Fmsy03","F.Fmsy04","F.Fmsy05","F.Fmsy06","F.Fmsy07","F.Fmsy08","F.Fmsy09","F.Fmsy10","F.Fmsy11","F.Fmsy12","F.Fmsy13","F.Fmsy14","F.Fmsy15",
-                          "B00","B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12","B13","B14","B15")
-
-  write.table(outheaders,file=outfile, append = T, sep=",",row.names=F,col.names=F)
-}
-
-cat("Parallel processing will use",ncores_for_computation,"cores\n")
-# Read data
-cdat         <- read.csv(catch_file, header=T, dec=".", stringsAsFactors = FALSE)
-cinfo        <- read.csv(id_file, header=T, dec=".", stringsAsFactors = FALSE)
-cat("Files", catch_file, ",", id_file, "read successfully","\n")
-
-#---------------------------------
-# Analyze stock(s)
-#---------------------------------
-if(is.na(stocks[1])==TRUE){
-  stocks         <- as.character(cinfo$Stock) # Analyze stocks in sequence of ID file
-  # stocks         <- sort(as.character(cinfo$Stock)) # Analyze stocks in alphabetic order
-  # stocks         <- as.character(cinfo$Stock[cinfo$Subregion=="Sardinia"]) # Analyze stocks in Region
-}
-
+ 
 cmsyAlgorithm <- function(stock,res,start.yr,end.yr,r.low,r.hi,user.log.r,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,btype,force.cmsy,comment,duncert,sigR,yr,ct.raw,bt, q.start, q.end,species,name,region,subregion,group,source) {
   
   library(R2jags)  # Interface with JAGS
@@ -1229,3 +1182,6 @@ cmsyAlgorithm <- function(stock,res,start.yr,end.yr,r.low,r.hi,user.log.r,stb.lo
 
   if(close.plots==T) graphics.off() # close on-screen graphics windows after files are saved
 }
+#---------------------------------------------
+# END OF FUNCTIONS
+#---------------------------------------------
