@@ -4,59 +4,6 @@
 ## Version of November 2016
 ## Note that time series excluding 2004 - 2010 will give an error in dataframe; set write.output <- F to avoid that error
 ##---------------------------------------------------------------------------------------------
-library(R2jags)  # Interface with JAGS
-library(coda)
-library("parallel")
-library("foreach")
-library("doParallel")
-library("gplots")
-
-#-----------------------------------------
-# Some general settings
-#-----------------------------------------
-# set.seed(999) # use for comparing results between runs
-rm(list=ls(all=TRUE)) # clear previous variables etc
-options(digits=3) # displays all numbers with three significant digits as default
-graphics.off() # close graphics windows from previous sessions
-FullSchaefer <- F    # initialize variable; automatically set to TRUE if enough abundance data are available
-n.chains     <- ifelse(detectCores() > 2,3,2) # set 3 chains in JAGS if more than 2 cores are available
-ncores_for_computation=detectCores() # cores to be used for parallel processing of CMSY
-cl           <- makeCluster(ncores_for_computation)
-registerDoParallel(cl, cores = ncores_for_computation)
-
-#-----------------------------------------
-# Required settings, File names
-#-----------------------------------------
-catch_file  <-  "O_Stocks_Catch_14_Med.csv"    #"O_ICES_Catch_13.csv" #  name of file containing "stock", "yr", "ct", and optional "bt"
-id_file     <-  "O_Stocks_ID_17_Med.csv"  # "O_ICES_ID_17.csv" #  name of file containing stock-specific info and settings for the analysis
-
-outfile     <- paste("Out_",format(Sys.Date(),format="%B%d%Y_"),id_file,sep="") # default name for output file
-outfile.txt <- paste(outfile,".txt", sep="")
-
-#----------------------------------------
-# Select stock to be analyzed
-#----------------------------------------
-stocks      <-NA
-# If the input files contain more than one stock, specify below the stock to be analyzed
-# If the line below is commented out (#), all stocks in the input file will be analyzed
-stocks <-  "SEPIOFF_CY" # c("SEPIOFF_CY","MICRPOU_IS","EPINGUA_IS","CHAMGAL_SA","CORYHIP_SA","ILLECOI_SA")
-
-#-----------------------------------------
-# General settings for the analysis
-#-----------------------------------------
-dataUncert   <- 0.1  # set observation error as uncertainty in catch - default is SD=0.1
-sigmaR       <- 0.1 # overall process error for CMSY; SD=0.1 is the default
-n            <- 10000 # initial number of r-k pairs
-n.new        <- n # initialize n.new
-ni           <- 3 # iterations for r-k-startbiomass combinations, to test different variability patterns; no improvement seen above 3
-nab          <- 2 # default=5; minimum number of years with abundance data to run BSM
-mgraphs      <- T # set to TRUE to produce additional graphs for management
-save.plots   <- T # set to TRUE to save graphs to JPEG files
-close.plots  <- F # set to TRUE to close on-screen plots after they are saved, to avoid "too many open devices" error in batch-processing
-write.output <- T # set to TRUE if table with results in output file is wanted; expects years 2004-2010 to be available
-force.cmsy   <- F # set to TRUE if CMSY results are to be preferred over BSM results
-select.yr    <- NA # option to display F, B, F/Fmsy and B/Bmsy for a certain year; default NA
-
 #----------------------------------------------
 #  FUNCTIONS
 #----------------------------------------------
@@ -222,6 +169,15 @@ if(is.na(stocks[1])==TRUE){
 }
 
 cmsyAlgorithm <- function(stock,res,start.yr,end.yr,r.low,r.hi,user.log.r,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,btype,force.cmsy,comment,duncert,sigR,yr,ct.raw,bt, q.start, q.end,species,name,region,subregion,group,source) {
+  
+  library(R2jags)  # Interface with JAGS
+  library(coda)
+  library("parallel")
+  library("foreach")
+  library("doParallel")
+  library("gplots")
+  
+  
   if(is.na(mean(ct.raw))){
     cat("ERROR: Missing value in Catch data; fill or interpolate\n")
   }
@@ -1273,64 +1229,3 @@ cmsyAlgorithm <- function(stock,res,start.yr,end.yr,r.low,r.hi,user.log.r,stb.lo
 
   if(close.plots==T) graphics.off() # close on-screen graphics windows after files are saved
 }
-
-# analyze one stock after the other
-for(stock in stocks) {
-  cat("Processing",stock,",", as.character(cinfo$ScientificName[cinfo$Stock==stock]),"\n")
-  # assign data from cinfo to vectors
-  res          <- as.character(cinfo$Resilience[cinfo$Stock==stock])
-  start.yr     <- as.numeric(cinfo$StartYear[cinfo$Stock==stock])
-  end.yr       <- as.numeric(cinfo$EndYear[cinfo$Stock==stock])
-  r.low        <- as.numeric(cinfo$r.low[cinfo$Stock==stock])
-  r.hi         <- as.numeric(cinfo$r.hi[cinfo$Stock==stock])
-  user.log.r   <- ifelse(is.na(r.low)==F & is.na(r.hi)==F,TRUE,FALSE)
-  stb.low      <- as.numeric(cinfo$stb.low[cinfo$Stock==stock])
-  stb.hi       <- as.numeric(cinfo$stb.hi[cinfo$Stock==stock])
-  int.yr       <- as.numeric(cinfo$int.yr[cinfo$Stock==stock])
-  intb.low     <- as.numeric(cinfo$intb.low[cinfo$Stock==stock])
-  intb.hi      <- as.numeric(cinfo$intb.hi[cinfo$Stock==stock])
-  endb.low     <- as.numeric(cinfo$endb.low[cinfo$Stock==stock])
-  endb.hi      <- as.numeric(cinfo$endb.hi[cinfo$Stock==stock])
-  q.start      <- cinfo$q.start[cinfo$Stock==stock]
-  q.end        <- cinfo$q.end[cinfo$Stock==stock]
-  btype        <- as.character(cinfo$btype[cinfo$Stock==stock])
-  force.cmsy   <- ifelse(force.cmsy==T,T,cinfo$force.cmsy[cinfo$Stock==stock])
-  comment      <- as.character(cinfo$Comment[cinfo$Stock==stock])
-  species      <- cinfo$ScientificName[cinfo$Stock==stock]
-  name         <- cinfo$Name[cinfo$Stock==stock]
-  region       <- cinfo$Region[cinfo$Stock==stock]
-  subregion    <- cinfo$Subregion[cinfo$Stock==stock]
-  group        <- cinfo$Group[cinfo$Stock==stock]
-  source        <- cinfo$Source[cinfo$Stock==stock]
-
-  # set global defaults for uncertainty
-  duncert      <- dataUncert
-  sigR         <- sigmaR
-
-  # check for common errors
-  if (length(btype)==0){
-    cat("ERROR: Could not find the stock in the ID input file - check that the stock names match in ID and Catch files and that commas are used (not semi-colon)")
-    return (NA) }
-  if(start.yr < cdat$yr[cdat$Stock==stock][1]){
-    cat("ERROR: start year in ID file before first year in catch file\n")
-    return (NA)}
-
-  # extract data on stock
-  yr           <- as.numeric(cdat$yr[cdat$Stock==stock & cdat$yr >= start.yr & cdat$yr <= end.yr])
-
-  if (length(yr)==0){
-    cat("ERROR: Could not find the stock in the Catch input files - Please check that the code is written correctly")
-    return (NA)
-  }
-
-  ct.raw           <- as.numeric(cdat$ct[cdat$Stock==stock & cdat$yr >= start.yr & cdat$yr <= end.yr])/1000  ## assumes that catch is given in tonnes, transforms to '000 tonnes
-  if(btype=="biomass" | btype=="CPUE" ) {
-    bt <- as.numeric(cdat$bt[cdat$Stock==stock & cdat$yr >= start.yr & cdat$yr <= end.yr])/1000  ## assumes that biomass is in tonnes, transforms to '000 tonnes
-  } else {bt <- NA}
-
-  cmsyAlgorithm(stock,res,start.yr,end.yr,r.low,r.hi,user.log.r,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,btype,force.cmsy,comment,duncert,sigR,yr,ct.raw,bt, q.start, q.end,species,name,region,subregion,group,source)
-} # end of stocks loop
-
-#stop parallel processing clusters
-stopCluster(cl)
-stopImplicitCluster()
