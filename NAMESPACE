@@ -1,4 +1,2 @@
 exportPattern("^[[:alpha:]]+")
-export(filter)
-export(filter_)
-importFrom(stats,filter)
+import(stats)
