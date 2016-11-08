@@ -351,6 +351,23 @@ cmsyAlgorithm <-
            col = "red",
            lwd = 2)
     
+    plot1 <-
+      list(
+        "x" = yr,
+        "y" = ct.raw,
+        "ylim" = c(0, max(
+          ifelse(substr(id_file, 1, 3) == "Sim",
+               1.1 * true.MSY, 0), 1.2 * max(ct.raw)
+          )),
+        "line1X" = yr,
+        "line1Y" = ct,
+        "point1X" = yr[max.yr.i],
+        "point1Y" = max.ct,
+        "point2X" = yr[min.yr.i],
+        "point2Y" = min.ct,
+        "main" = paste("A: ", stock, "catch")
+      )      
+        
     # plot r-k graph
     plot(
       x = ri1,
@@ -366,6 +383,15 @@ cmsyAlgorithm <-
       bty = "l",
       col = "gray95"
     )
+        
+    plot2 <-
+      list(
+        "x" = ri1,
+        "y" = ki1,
+        "xlim" = start.r,
+        "ylim" = start.k,
+        "main" = B: Finding viable r-k
+      )    
     
     #---------------------------------------------------------------------
     # 1 - Call CMSY-SchaeferMC function to preliminary explore the r-k space
@@ -1720,6 +1746,8 @@ cmsyAlgorithm <-
     resultJson <-
       list("max.y" = max.y,
            "min.y" = min.y,
+           "plot1" = plot1,
+           "plot2" = plot2,
            "plot3" = plot3,
            "plot4" = plot4,
            "plot5" = plot5,
