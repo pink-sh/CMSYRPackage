@@ -2201,7 +2201,58 @@ cmsyAlgorithm <-
       
       
       # write screen text into text outfile.txt
-      
+      outString = ""
+      outString = paste0(outString, "Species:",
+        species,
+        ", stock:",
+        stock,
+        "\n",
+        name,
+        "\n",
+        "Source:",
+        source,
+        "\n",
+        "Region:",
+        region,
+        ",",
+        subregion,
+        "\n",
+        "Catch data used from years",
+        min(yr),
+        "-",
+        max(yr),
+        ", abundance =",
+        btype,
+        "\n",
+        "Prior initial relative biomass =",
+        startbio[1],
+        "-",
+        startbio[2],
+        ifelse(is.na(stb.low) == T, "default", "expert"),
+        "\n",
+        "Prior intermediate rel. biomass=",
+        intbio[1],
+        "-",
+        intbio[2],
+        "in year",
+        int.yr,
+        ifelse(is.na(intb.low) == T, "default", "expert"),
+        "\n",
+        "Prior final relative biomass   =",
+        endbio[1],
+        "-",
+        endbio[2],
+        ifelse(is.na(endb.low) == T, ", default", "expert"),
+        "\n",
+        "Prior range for r =",
+        format(start.r[1], digits = 2),
+        "-",
+        format(start.r[2], digits = 2),
+        ifelse(is.na(r.low) == T, "default", "expert,"),
+        ", prior range for k  =",
+        start.k[1],
+        "-",
+        start.k[2])
       cat(
         "Species:",
         species,
@@ -2267,6 +2318,10 @@ cmsyAlgorithm <-
           file = outfile.txt,
           append = T
         )
+        outString = paste0(outString, "\n Prior range of q =",
+          q.prior[1],
+          "-",
+          q.prior[2])
       }
       cat(
         "\n\n Results of CMSY analysis with altogether",
@@ -2307,6 +2362,42 @@ cmsyAlgorithm <-
         file = outfile.txt,
         append = T
       )
+      outString = paste0(outString, 
+        "\n\n Results of CMSY analysis with altogether",
+        n.viable.b,
+        "viable trajectories for",
+        n.viable.pt,
+        "r-k pairs \n",
+        "r =",
+        r.est,
+        ", 95% CL =",
+        lcl.r.est,
+        "-",
+        ucl.r.est,
+        ", k =",
+        k.est,
+        ", 95% CL =",
+        lcl.k.est,
+        "-",
+        ucl.k.est,
+        "\n",
+        "MSY =",
+        MSY.est,
+        ", 95% CL =",
+        lcl.MSY.est,
+        "-",
+        ucl.MSY.est,
+        "\n",
+        "Relative biomass last year =",
+        median.btv.lastyr,
+        "k, 2.5th =",
+        lcl.median.btv.lastyr,
+        ", 97.5th =",
+        ucl.median.btv.lastyr,
+        "\n",
+        "Exploitation F/(r/2) in last year =",
+        (F.CMSY / Fmsy.CMSY)[length(median.btv) - 1],
+        "\n")
       
       if (FullSchaefer == T) {
         cat(
@@ -2345,6 +2436,40 @@ cmsyAlgorithm <-
           file = outfile.txt,
           append = T
         )
+        outString = paste0(outString,
+                           "\n Results from Bayesian Schaefer model using catch &",
+                            btype,
+                            "\n",
+                            "r =",
+                            r.jags,
+                            ", 95% CL =",
+                            lcl.r.jags,
+                            "-",
+                            ucl.r.jags,
+                            ", k =",
+                            k.jags,
+                            ", 95% CL =",
+                            lcl.k.jags,
+                            "-",
+                            ucl.k.jags,
+                            "\n",
+                            "MSY =",
+                            MSY.jags,
+                            ", 95% CL =",
+                            lcl.MSY.jags,
+                            "-",
+                            ucl.MSY.jags,
+                            "\n",
+                            "Relative biomass in last year =",
+                            quant.P[2, ][nyr],
+                            "k, 2.5th perc =",
+                            quant.P[1, ][nyr],
+                            ", 97.5th perc =",
+                            quant.P[3, ][nyr],
+                            "\n",
+                            "Exploitation F/(r/2) in last year =",
+                            (ct.raw[nyr] / (quant.P[2, ][nyr] * k.jags)) / (r.jags / 2)
+                           )
         if (btype == "CPUE") {
           cat(
             "\n q =",
@@ -2356,6 +2481,12 @@ cmsyAlgorithm <-
             file = outfile.txt,
             append = T
           )
+          outString = paste0(outString,"\n q =",
+            mean.q,
+            ", lcl =",
+            lcl.q,
+            ", ucl =",
+            ucl.q)
         }
       }
       
@@ -2424,6 +2555,69 @@ cmsyAlgorithm <-
         append = T
       )
       
+      outString = paste0(outString,
+                         "\n\n Results for Management (based on",
+        ifelse(FullSchaefer == F |
+                 force.cmsy == T, "CMSY", "BSM"),
+        "analysis) \n",
+        "Fmsy =",
+        Fmsy,
+        ", 95% CL =",
+        lcl.Fmsy,
+        "-",
+        ucl.Fmsy,
+        "(if B > 1/2 Bmsy then Fmsy = 0.5 r)\n",
+        "Fmsy =",
+        Fmsy.last,
+        ", 95% CL =",
+        lcl.Fmsy.last,
+        "-",
+        ucl.Fmsy.last,
+        "(r and Fmsy are linearly reduced if B < 1/2 Bmsy)\n",
+        "MSY  =",
+        MSY,
+        ",  95% CL =",
+        lcl.MSY,
+        "-",
+        ucl.MSY,
+        "\n",
+        "Bmsy =",
+        Bmsy,
+        ",  95% CL =",
+        lcl.Bmsy,
+        "-",
+        ucl.Bmsy,
+        "\n",
+        "Biomass in last year  =",
+        B.last,
+        ", 2.5th perc =",
+        lcl.B.last,
+        ", 97.5 perc =",
+        ucl.B.last,
+        "\n",
+        "B/Bmsy in last year   =",
+        B.Bmsy.last,
+        ", 2.5th perc =",
+        lcl.B.Bmsy.last,
+        ", 97.5 perc =",
+        ucl.B.Bmsy.last,
+        "\n",
+        "Fishing mortality in last year =",
+        F.last,
+        ", 2.5th perc =",
+        lcl.F.last,
+        ", 97.5 perc =",
+        ucl.F.last,
+        "\n",
+        "F/Fmsy  =",
+        F.Fmsy.last,
+        ", 2.5th perc =",
+        lcl.F.Fmsy.last,
+        ", 97.5 perc =",
+        ucl.F.Fmsy.last,
+        "\n"
+                         )
+      
       # show stock status and exploitation for optional selected year
       if (is.na(sel.yr) == F) {
         cat(
@@ -2442,6 +2636,19 @@ cmsyAlgorithm <-
           file = outfile.txt,
           append = T
         )
+        outString = paste0(outString, "\n Stock status and exploitation in",
+          sel.yr,
+          "\n",
+          "Biomass =",
+          B.sel,
+          ", B/Bmsy =",
+          B.Bmsy.sel,
+          ", fishing mortality F =",
+          F.sel,
+          ", F/Fmsy =",
+          F.Fmsy.sel,
+          "\n"
+                           )
       }
       
       if (btype != "None" & length(bt[is.na(bt) == F]) < nab) {
@@ -2452,6 +2659,9 @@ cmsyAlgorithm <-
           file = outfile.txt,
           append = T
         )
+        outString = paste0(outString, "Less than",
+          nab,
+          "years with abundance data available, shown on second axis\n")
       }
       
       cat(
@@ -2462,6 +2672,10 @@ cmsyAlgorithm <-
         file = outfile.txt,
         append = T
       )
+      outString = paste0(outString, " Comment:",
+        comment,
+        "\n",
+        "----------------------------------------------------------\n\n")
     } # end of loop to write text to file
     
     if (close.plots == T)
