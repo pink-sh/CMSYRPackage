@@ -1415,11 +1415,6 @@ cmsyAlgorithm <-
       plot3$lcl.k.jags <- lcl.k.jags
       plot3$ucl.k.jags <- ucl.k.jags
     }
-      
-    resultJson <-
-      list("max.y" = max.y,
-           "min.y" = min.y,
-           "plot1" = plot1)  
     
     # plot blue dot for CMSY r-k, with 95% CL lines
     points(x = r.est,
