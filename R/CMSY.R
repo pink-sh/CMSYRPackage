@@ -1717,7 +1717,9 @@ cmsyAlgorithm <-
         "y" = y,
         "main" = "F: Equilibrium curve",
         "dot1X" = median.btv[1:nyr],
-        "dot1Y" = ct / MSY.est
+        "dot1Y" = ct / MSY.est,
+        "xlim" = c(1, 0),
+        "ylim" = c(0, max.y)
       )  
       
     resultJson <-
