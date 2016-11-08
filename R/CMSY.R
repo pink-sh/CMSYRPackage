@@ -1376,6 +1376,18 @@ cmsyAlgorithm <-
       xlab = "r",
       ylab = "k",
       main = "C: Analysis of viable r-k"
+      rest = r.est,
+      kest = k.est,
+      lclrest = lcl.r.est,
+      lclkest = lcl.k.est,
+      uclrest = ucl.r.est,
+      uclkest = ucl.k.est,
+      rjags = r.jags,
+      kjags = k.jags,
+      lclrjags = lcl.r.jags,
+      uclrjags = ucl.r.jags,
+      lclkjags = lcl.k.jags,
+      uclkjags = ucl.k.jags
     )
     
     # plot r-k pairs from MCMC
