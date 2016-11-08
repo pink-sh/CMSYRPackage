@@ -1510,6 +1510,37 @@ cmsyAlgorithm <-
     lines(x = c(max(yr), max(yr)),
           y = endbio,
           col = "blue")
+      
+    plot2 <-
+      list(
+        "x" = yr,
+        "y" = median.btv[1:nyr],
+        "ylim" = c(0, max.y),
+        "lwd" = 16,
+        "xlab" = "Year",
+        "ylab" = "Relative biomass B/k",
+        "type" = 1,
+        "bty" = 1,
+        "main" = "D: Biomass",
+        "dotted1X" = yr,
+        "dotted1Y" = lcl.btv[1:nyr],
+        "dotted1X" = yr,
+        "dotted1Y" = ucl.btv[1:nyr],
+        "abline1" = 0.5,
+        "abline2" = 0.25,
+        "line1X" = c(int.yr, int.yr),
+        "line2X" = c(int.yr, int.yr),
+        "line3X" = c(max(yr), max(yr)),
+        "line1Y" = startbio,
+        "line2Y" = intbio,
+        "line3Y" = endbio
+      )  
+      
+    resultJson <-
+      list("max.y" = max.y,
+           "min.y" = min.y,
+           "plot1" = plot1,
+           "plot2" = plot2) 
     
     # if observed biomass is available, plot red biomass line (use non-smoothed bt)
     if (btype == "biomass" & FullSchaefer == T) {
