@@ -1375,7 +1375,7 @@ cmsyAlgorithm <-
       bty = "l",
       xlab = "r",
       ylab = "k",
-      main = "C: Analysis of viable r-k"
+      main = "C: Analysis of viable r-k",
       rest = r.est,
       kest = k.est,
       lclrest = lcl.r.est,
