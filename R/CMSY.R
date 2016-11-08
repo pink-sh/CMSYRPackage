@@ -1554,7 +1554,8 @@ cmsyAlgorithm <-
         "line3X" = c(max(yr), max(yr)),
         "line1Y" = startbio,
         "line2Y" = intbio,
-        "line3Y" = endbio
+        "line3Y" = endbio,
+        "main" = "D: Biomass"
       )  
     
     # if observed biomass is available, plot red biomass line (use non-smoothed bt)
