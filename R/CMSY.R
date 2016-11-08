@@ -1742,17 +1742,7 @@ cmsyAlgorithm <-
         "dot1Y" = ct / MSY.est,
         "xlim" = c(1, 0),
         "ylim" = c(0, max.y)
-      )  
-      
-    resultJson <-
-      list("max.y" = max.y,
-           "min.y" = min.y,
-           "plot1" = plot1,
-           "plot2" = plot2,
-           "plot3" = plot3,
-           "plot4" = plot4,
-           "plot5" = plot5,
-           "plot6" = plot6)    
+      )    
     
     # plot catch scaled by BSM MSY against observed biomass scaled by BSM k
     if (btype == "biomass") {
@@ -2680,7 +2670,16 @@ cmsyAlgorithm <-
     
     if (close.plots == T)
       graphics.off() # close on-screen graphics windows after files are saved
-    
+    resultJson <-
+      list("max.y" = max.y,
+           "min.y" = min.y,
+           "plot1" = plot1,
+           "plot2" = plot2,
+           "plot3" = plot3,
+           "plot4" = plot4,
+           "plot5" = plot5,
+           "plot6" = plot6,
+           "out" = outString)  
     return(resultJson)
     }  
   
