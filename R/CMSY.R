@@ -390,7 +390,7 @@ cmsyAlgorithm <-
         "y" = ki1,
         "xlim" = start.r,
         "ylim" = start.k,
-        "main" = B: Finding viable r-k
+        "main" = "B: Finding viable r-k"
       )    
     
     #---------------------------------------------------------------------
