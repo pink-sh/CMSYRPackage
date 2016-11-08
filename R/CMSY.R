@@ -1528,7 +1528,7 @@ cmsyAlgorithm <-
         "dotted2Y" = ucl.btv[1:nyr],
         "abline1" = 0.5,
         "abline2" = 0.25,
-        "line1X" = c(int.yr, int.yr),
+        "line1X" = c(yr[1], yr[1]),
         "line2X" = c(int.yr, int.yr),
         "line3X" = c(max(yr), max(yr)),
         "line1Y" = startbio,
