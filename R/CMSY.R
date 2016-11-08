@@ -1349,7 +1349,7 @@ cmsyAlgorithm <-
     resultJson[['max.y']] <- max.y
     resultJson[['min.y']] <- min.y
     
-    plot1 <-
+    plot3 <-
       list(
         "x" = rv.all,
         "y" = kv.all,
@@ -1408,12 +1408,12 @@ cmsyAlgorithm <-
         y = c(lcl.k.jags, ucl.k.jags),
         col = "red"
       )
-      plot1$r.jags <- r.jags
-      plot1$k.jags <- k.jags
-      plot1$lcl.r.jags <- lcl.r.jags
-      plot1$ucl.r.jags <- ucl.r.jags
-      plot1$lcl.k.jags <- lcl.k.jags
-      plot1$ucl.k.jags <- ucl.k.jags
+      plot3$r.jags <- r.jags
+      plot3$k.jags <- k.jags
+      plot3$lcl.r.jags <- lcl.r.jags
+      plot3$ucl.r.jags <- ucl.r.jags
+      plot3$lcl.k.jags <- lcl.k.jags
+      plot3$ucl.k.jags <- ucl.k.jags
     }
       
     resultJson <-
@@ -1511,7 +1511,7 @@ cmsyAlgorithm <-
           y = endbio,
           col = "blue")
       
-    plot2 <-
+    plot4 <-
       list(
         "x" = yr,
         "y" = median.btv[1:nyr],
@@ -1535,12 +1535,6 @@ cmsyAlgorithm <-
         "line2Y" = intbio,
         "line3Y" = endbio
       )  
-      
-    resultJson <-
-      list("max.y" = max.y,
-           "min.y" = min.y,
-           "plot1" = plot1,
-           "plot2" = plot2) 
     
     # if observed biomass is available, plot red biomass line (use non-smoothed bt)
     if (btype == "biomass" & FullSchaefer == T) {
@@ -1648,6 +1642,14 @@ cmsyAlgorithm <-
       col = "blue"
     )
     abline(h = 1, lty = "dashed")
+      
+    plot5 <-
+      list(
+        "x" = yr,
+        "y" = F.CMSY / Fmsy.CMSY,
+        "main" = "E: Exploitation rate",
+        "dotted1X" = 1
+      )   
     
     # plot F from observed biomass
     if (btype == "biomass" &
@@ -1708,6 +1710,23 @@ cmsyAlgorithm <-
       pch = 16,
       col = "blue"
     )
+      
+    plot6 <-
+      list(
+        "x" = x,
+        "y" = y,
+        "main" = "F: Equilibrium curve",
+        "dot1X" = median.btv[1:nyr],
+        "dot1Y" = ct / MSY.est
+      )  
+      
+    resultJson <-
+      list("max.y" = max.y,
+           "min.y" = min.y,
+           "plot3" = plot3,
+           "plot4" = plot4,
+           "plot5" = plot5,
+           "plot6" = plot6)    
     
     # plot catch scaled by BSM MSY against observed biomass scaled by BSM k
     if (btype == "biomass") {
