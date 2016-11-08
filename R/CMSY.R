@@ -1357,7 +1357,19 @@ cmsyAlgorithm <-
         "ylim" = c(min.y, max.y),
         "pch" = 16,
         "ylab" = "k",
-        "main" = "C: Analysis of viable r-k"
+        "main" = "C: Analysis of viable r-k",
+        "rest" = r.est,
+        "kest" = k.est,
+        "lcl.r.est" = lcl.r.est,
+        "lcl.k.est" = lcl.k.est,
+        "ucl.r.est" = ucl.r.est,
+        "ucl.k.est" = ucl.k.est,
+        "r.jags" = r.jags,
+        "k.jags" = k.jags,
+        "lcl.r.jags" = lcl.r.jags,
+        "ucl.r.jags" = ucl.r.jags,
+        "lcl.k.jags" = lcl.k.jags,
+        "ucl.k.jags" = ucl.k.jags
       )
     resultJson <-
       list("max.y" = max.y,
@@ -1375,19 +1387,7 @@ cmsyAlgorithm <-
       bty = "l",
       xlab = "r",
       ylab = "k",
-      main = "C: Analysis of viable r-k",
-      rest = r.est,
-      kest = k.est,
-      lclrest = lcl.r.est,
-      lclkest = lcl.k.est,
-      uclrest = ucl.r.est,
-      uclkest = ucl.k.est,
-      rjags = r.jags,
-      kjags = k.jags,
-      lclrjags = lcl.r.jags,
-      uclrjags = ucl.r.jags,
-      lclkjags = lcl.k.jags,
-      uclkjags = ucl.k.jags
+      main = "C: Analysis of viable r-k"
     )
     
     # plot r-k pairs from MCMC
